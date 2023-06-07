@@ -13,7 +13,7 @@
           <span class="tem">{{ weatcherData.tem }}°C</span>
           <span class="wea">{{ weatcherData.wea }}</span>
         </div>
-        <h2>视频数据大数据分析可视化平台</h2>
+        <h2>BiliBili视频数据可视化平台</h2>
         <div class="showTime">
           <span class="time">{{ nowTime }}</span>
           <span class="date">
@@ -27,17 +27,17 @@
         <div class="item left">
           <div class="panel">
             <h2>播放量变化</h2>
-<!--            <business/>-->
-            <play-volume/>
+            <business/>
+<!--            <play-volume/>-->
             <div class="panel-footer"></div>
           </div>
           <div class="panel">
-            <h2>人才队伍</h2>
+            <h2>视频六维图</h2>
             <talent/>
             <div class="panel-footer"></div>
           </div>
           <div class="panel">
-            <h2>营收状况</h2>
+            <h2>用户行为图</h2>
             <income/>
             <div class="panel-footer"></div>
           </div>
@@ -48,28 +48,28 @@
             <div class="resume-hd">
               <ul>
                 <li>
-                  <countTo :startVal='startVal' :endVal='490' :duration='6000' separator=""></countTo>
+                  <countTo :startVal='startVal' :endVal='716' :duration='6000' separator=""></countTo>
                 </li>
                 <li>
-                  <countTo :startVal='startVal' :endVal='75' :duration='6000' separator=""></countTo>
+                  <countTo :startVal='startVal' :endVal='652' :duration='6000' separator=""></countTo>
                 </li>
                 <li>
-                  <countTo :startVal='startVal' :endVal='3000' :duration='6000' separator=""></countTo>
+                  <countTo :startVal='startVal' :endVal='422278855' :duration='6000' separator=""></countTo>
                 </li>
               </ul>
             </div>
             <div class="resume-bd">
               <ul>
-                <li>公司总人数（单位：人）</li>
-                <li>技术人员占比（单位：%）</li>
-                <li>产品投资额（单位：万元）</li>
+                <li>视频总量</li>
+                <li>up主人数</li>
+                <li>总播放量</li>
               </ul>
             </div>
           </div>
           <div class="map">
             <div class="chart" id="chart_relation"></div>
             <div class="map1"></div>
-            <div class="map2"></div>
+<!--            <div class="map2"></div>-->
             <div class="map3"></div>
 <!--            {{this.relation}}-->
           </div>
@@ -77,17 +77,17 @@
 
         <div class="item right">
           <div class="panel">
-            <h2>产品热词</h2>
+            <h2>热门标签</h2>
             <wordCloud/>
             <div class="panel-footer"></div>
           </div>
           <div class="panel">
-            <h2>客户分布</h2>
+            <h2>时长分布</h2>
             <distribution/>
             <div class="panel-footer"></div>
           </div>
           <div class="panel">
-            <h2>发展历程</h2>
+            <h2>分区视频数量</h2>
             <history/>
             <div class="panel-footer"></div>
           </div>
@@ -119,8 +119,7 @@ export default {
       timer: null,
       imgSrc: '',
       weatcherData: {},
-      startVal: 0,
-      relation: ""
+      startVal: 0
     }
   },
   computed: {},
@@ -164,40 +163,86 @@ export default {
       myChart.showLoading();
       this.$axios.get('http://localhost:8081/data/output.json').then((res) => {
       // this.$axios.get('https://echarts.apache.org/examples/data/asset/data/les-miserables.json').then((res) => {
-        this.relation = res.data;
-        console.log(this.relation);
-      })
+        myChart.hideLoading();
 
-      myChart.hideLoading();
+        res.data.nodes.forEach(function (node) {
+          node.symbolSize += 10;
+          node.label = {
+            //更改这里可以让节点展示自己的标签值，值越小，则越多的节点可以展示标签值
+            show: node.symbolSize > 15
+          };
+          console.log(1);
+        });
 
-      option = {
-        backgroundColor:'',
-        title: {
-          text: '视频标签关联',
-          subtext: 'BiliBili',
-          top: 'top',
-          left: 'center'
-        },
-        series: [
-          {
-            name: '视频标签关联',
-            type: 'graph',
-            layout: 'circular',
-            data: this.relation.nodes,
-            links: this.relation.links,
-            categories: this.relation.categories,
-            roam: true,
-            label: {
-              position: 'right'
-            },
-            force: {
-              repulsion: 100
+        // 遍历每条边
+        res.data.links.forEach(function (link) {
+          link.label = {
+            show: false,
+            formatter: link.source,
+            emphasis: { // 在高亮（鼠标悬停）状态下的样式
+              show: true // 在高亮状态下显示标签
             }
-          }
-        ]
-      };
+          };
+        });
 
-      myChart.setOption(option);
+        option = {
+          animation: false,
+          backgroundColor: '',
+          title: {
+            text: '标签关联图',
+            subtext: 'Default layout',
+            top: 'bottom',
+            left: 'right'
+          },
+          tooltip: {},
+          legend: {
+            show: false,
+              // selectedMode: 'single',
+              data: res.data.categories.map(function (a) {
+                return a.name;
+              })
+          },
+          animationDuration: 1500,
+          animationEasingUpdate: 'quinticInOut',
+          series: [
+            {
+              name: 'Les Miserables',
+              type: 'graph',
+              // 这里可以改为force和circular ，两者的效果我发在群里了
+              // layout: 'force',
+              layout: 'circular',
+              data: res.data.nodes,
+              links: res.data.links,
+              categories: res.data.categories,
+              roam: false,
+              label: {
+                position: 'right',
+                formatter: '{b}'
+              },
+              lineStyle: {
+                width: 3,
+                color: 'source',
+                curveness: 0.2
+              },
+              emphasis: {
+                focus: 'adjacency',
+                lineStyle: {
+                  width: 10
+                }
+              },
+              // force的配置项
+              // force: {
+              //     // 增加排斥力
+              //     repulsion: 30,
+              //     // 或者增加引力
+              //     gravity: 0
+              // }
+            }
+          ]
+        };
+
+        myChart.setOption(option);
+      })
     }
   },
   beforeDestroy() {
@@ -321,7 +366,7 @@ export default {
                   text-align: center;
                   height: 1.2rem;
                   line-height: 1.2rem;
-                  font-size: 0.65rem;
+                  font-size: 0.45rem;
                   color: #ffeb7b;
                   padding: 0.05rem 0;
                   font-family: 'DIGITALDREAMFAT';

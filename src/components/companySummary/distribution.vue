@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import * as echarts from 'echarts';
+
 export default {
   name: "distribution",
   data() {
@@ -23,171 +25,54 @@ export default {
   },
   methods: {
     getEchartRight2() {
-      let myChart = echarts.init(document.getElementById('chart_right2'));
+      let myChart = echarts.init(document.getElementById('chart_right2'), 'dark');
       let option = {
-        color: ['#EAEA26', '#906BF9', '#FE5656', '#01E17E', '#3DD1F9', '#FFAD05', '#4465fc'],
+        backgroundColor: '',
         tooltip: {
-          trigger: 'item',
-          formatter: '{b} : {c} ({d}%)'
+          trigger: 'item'
         },
-        polar: {},
-        angleAxis: {
-          interval: 1,
-          type: 'category',
-          data: [],
-          z: 10,
-          axisLine: {
-            show: false,
-            lineStyle: {
-              color: '#0B4A6B',
-              width: 5,
-              type: 'solid'
-            },
-          },
-          axisLabel: {
-            interval: 0,
-            show: true,
-            color: '#0B4A6B',
-            margin: 8,
-            fontSize: 16
-          },
+        legend: {
+          show: false
         },
-        radiusAxis: {
-          min: 40,
-          max: 120,
-          interval: 20,
-          axisLine: {
-            show: false,
-            lineStyle: {
-              color: '#0B3E5E',
-              width: 1,
-              type: 'solid'
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '70%'],
+            // adjust the start angle
+            startAngle: 180,
+            label: {
+              show: true,
+              formatter(param) {
+                // correct the percentage
+                return param.name + ' (' + param.percent * 2 + '%)';
+              }
             },
-          },
-          axisLabel: {
-            formatter: '{value} %',
-            show: false,
-            padding: [0, 0, 20, 0],
-            color: '#0B3E5E',
-            fontSize: 16
-          },
-          splitLine: {
-            lineStyle: {
-              color: '#0B3E5E',
-              width: 2,
-              type: "solid"
-            }
+            data: [
+              { value: 75, name: '长视频' },
+              { value: 117, name: '较长视频' },
+              { value: 155, name: '中长度视频' },
+              { value: 344, name: '较短视频' },
+              { value: 27, name: '短视频' },
+              {
+                // make an record to fill the bottom 50%
+                value: 75 + 117 + 155 + 344 + 27,
+                itemStyle: {
+                  // stop the chart from rendering this piece
+                  color: 'none',
+                  decal: {
+                    symbol: 'none'
+                  }
+                },
+                label: {
+                  show: false
+                }
+              }
+            ]
           }
-        },
-        calculable: true,
-        series: [{
-          type: 'pie',
-          radius: ['6%', '10%'],
-          hoverAnimation: false,
-          labelLine: {
-            normal: {
-              show: false,
-              length: 30,
-              length2: 50
-            },
-            emphasis: {
-              show: false
-            }
-          },
-          tooltip: {
-            show: false
-          },
-          data: [{
-            name: '',
-            value: 0,
-            itemStyle: {
-              normal: {
-                color: '#0B4A6B'
-              }
-            }
-          }]
-        }, {
-          type: 'pie',
-          radius: ['90%', '95%'],
-          hoverAnimation: false,
-          labelLine: {
-            normal: {
-              show: false,
-              length: 30,
-              length2: 50
-            },
-            emphasis: {
-              show: false
-            }
-          },
-          tooltip: {
-            show: false
-          },
-          data: [{
-            name: '',
-            value: 0,
-            itemStyle: {
-              normal: {
-                color: '#0B4A6B'
-              }
-            }
-          }]
-        },{
-          stack: 'a',
-          type: 'pie',
-          radius: ['20%', '80%'],
-          roseType: 'area',
-          zlevel: 10,
-          label: {
-            normal: {
-              show: true,
-              formatter: '{b}',
-              textStyle: {
-                fontSize: 12,
-              },
-              position: 'outside'
-            },
-            emphasis: {
-              show: false
-            }
-          },
-          labelLine: {
-            normal: {
-              show: true,
-              length: 15,
-              length2: 50,
-              lineStyle: {
-                type: 'dotted' 
-              } 
-            },
-            emphasis: {
-              show: true
-            }
-          },
-          data: [{
-            value: 35,
-            name: '湖南'
-          },{
-            value: 28,
-            name: '河北'
-          },{
-            value: 23,
-            name: '广东'
-          },{
-            value: 18,
-            name: '四川'
-          },{
-            value: 13,
-            name: '浙江'
-          },{
-            value: 8,
-            name: '江苏'
-          },{
-            value: 5,
-            name: '湖北'
-          }]
-        }]
-      }
+        ]
+      };
 
       myChart.setOption(option, true);
       window.addEventListener('resize', () => {
