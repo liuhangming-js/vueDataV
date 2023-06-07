@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <script type="text/javascript">
+        var ROOT_PATH = 'https://echarts.apache.org/examples';
+
+        var chartDom = document.getElementById('main');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        myChart.showLoading();
+        $.getJSON('./output.json', function (graph) {
+            myChart.hideLoading();
+
+            graph.nodes.forEach(function (node) {
+                node.label = {
+                    //更改这里可以让节点展示自己的标签值，值越小，则越多的节点可以展示标签值
+                    show: node.symbolSize > 8
+                };
+            });
+
+            // 遍历每条边
+            graph.links.forEach(function (link) {
+                link.label = {
+                    show: false,
+                    formatter: link.source,
+                    emphasis: { // 在高亮（鼠标悬停）状态下的样式
+                        show: true // 在高亮状态下显示标签
+                    }
+                };
+            });
+
+
+            option = {
+                title: {
+                    text: '标签关联图',
+                    subtext: 'Default layout',
+                    top: 'bottom',
+                    left: 'right'
+                },
+                tooltip: {},
+                legend: [
+                    {
+                        // selectedMode: 'single',
+                        data: graph.categories.map(function (a) {
+                            return a.name;
+                        })
+                    }
+                ],
+                animationDuration: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                series: [
+                    {
+                        name: 'Les Miserables',
+                        type: 'graph',
+                        // 这里可以改为force和circular ，两者的效果我发在群里了
+                        layout: 'circular',
+                        data: graph.nodes,
+                        links: graph.links,
+                        categories: graph.categories,
+                        roam: true,
+                        label: {
+                            position: 'right',
+                            formatter: '{b}'
+                        },
+                        lineStyle: {
+                            color: 'source',
+                            curveness: 0.3
+                        },
+                        emphasis: {
+                            focus: 'adjacency',
+                            lineStyle: {
+                                width: 10
+                            }
+                        }
+                        // force的配置项
+                        // ,
+                        // force: {
+                        //     // 增加排斥力
+                        //     // repulsion: 75,
+                        //     // 或者增加引力
+                        //     gravity: 0
+                        // }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        });
+
+    </script>
+</body>
+
+</html>

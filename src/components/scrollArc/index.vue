@@ -7,7 +7,7 @@
 <template>
   <div class="wrap-container sn-container"> 
     <div class="sn-content"> 
-      <div class="sn-title">滚动弧形线</div> 
+      <div class="sn-title">ECharts 入门示例</div>
       <div class="sn-body"> 
         <div class="wrap-container"> 
           <div class="chartsdom" id="chart_arc"></div>
@@ -20,107 +20,32 @@
 <script>
 export default {
   name: "scrollArc",
-  data() {
-    return {
-      option: null,
-      number: 0, // 播放所在下标
-      timer: null,
-      xData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      data: [54, 86, 46, 77, 96, 89, 88, 23, 38, 3, 66, 98]
-    }
-  },
   mounted() {
     this.getEchart();
   },
   methods: {
     getEchart() {
-      let myChart = echarts.init(document.getElementById('chart_arc'));
-      this.option = {
-        tooltip: {
-          trigger: 'axis',
-          showContent: false,
-          axisPointer: { 
-            type: 'shadow',
-            shadowStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 1,
-                color: '#5d83ff'
-              },{
-                offset: 0,
-                color: 'rgba(255, 255, 255, 0)'
-              }])
-            }
-          },
-        },
-        color: ['#5d83ff'],
-        grid: {
-          top: 30,
-          left: 20,
-          right: 20,
-          bottom: 20,
-          containLabel: true //轴上的数值
+      let myChart = this.$echarts.init(document.getElementById('chart_arc'));
+      // let myChart = echarts.init(document.getElementById('chart_arc'));
+      // 指定图表的配置项和数据
+      let option = {
+        tooltip: {},
+        legend: {
+          data:['销量']
         },
         xAxis: {
-          type: 'category',
-          data: this.xData,
-          boundaryGap: false,
-          axisTick: {
-            show: false
-          }, 
-          axisLabel: {
-            formatter: '{value} 月'
-          },
-          axisLine: {
-            lineStyle: {
-              color: '#999',
-            }
-          },
+          data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
         },
-        yAxis: {
-          type: 'value',
-          axisLine: {
-            show: false,
-            lineStyle: {
-              color: '#999'
-            }
-          },
-        },
+        yAxis: {},
         series: [{
-          name: '人数',
-          type: 'line',
-          data: this.data,
-          symbolSize: 10,
-          itemStyle: {
-            opacity: 0,
-          },
-          emphasis: {
-            label: {
-              show: true,
-              color: '#fff',
-              fontSize: 20
-            },
-            itemStyle: {
-              color: '#5d83ff',
-              borderColor: '#fff',
-              borderWidth: 2,
-              opacity: 1
-            },
-          },
-          areaStyle: {
-            normal: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: '#5d83ff'
-              },{
-                offset: 1,
-                color: 'rgba(0, 0, 0, 0)'
-              }]),
-            }
-          },
-          smooth: true,
+          name: '销量',
+          type: 'bar',
+          data: [10, 20, 36, 10, 10, 20]
         }]
       };
-      myChart.setOption(this.option, true);
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
 
       window.addEventListener('resize', () => {
         myChart.resize();
@@ -134,7 +59,7 @@ export default {
         });
 
         this.number++;
-        
+
         if (this.number > this.data.length) {
           this.number = 0;
         }
