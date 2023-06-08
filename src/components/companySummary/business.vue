@@ -6,7 +6,6 @@
 
 <template>
   <div class="business-container">
-    {{this.res0}}
     <div class="chart" id="chart_left1"></div>
   </div>
 </template>
@@ -18,139 +17,71 @@ export default {
   name: "business",
   data() {
     return {
-      ROOT_PATH: 'https://echarts.apache.org/examples',
-      updateFrequency: 2000,
-      dimension: 0,
-      countryColors: {
-        Australia: '#00008b',
-        Canada: '#f00',
-        China: '#ffde00',
-        Cuba: '#002a8f',
-        Finland: '#003580',
-        France: '#ed2939',
-        Germany: '#000',
-        Iceland: '#003897',
-        India: '#f93',
-        Japan: '#bc002d',
-        'North Korea': '#024fa2',
-        'South Korea': '#000',
-        'New Zealand': '#00247d',
-        Norway: '#ef2b2d',
-        Poland: '#dc143c',
-        Russia: '#d52b1e',
-        Turkey: '#e30a17',
-        'United Kingdom': '#00247d',
-        'United States': '#b22234'
-      },
-      chart: null,
-      option: null,
-      years: [],
-      flags: null,
-      data: null,
+
     }
   },
-  async mounted() {
-    await this.fetchData();
+  mounted() {
     this.initChart();
   },
   methods: {
     initChart() {
-      const chartDom = document.getElementById('main');
-      this.chart = echarts.init(chartDom);
+      let myChart = echarts.init(document.getElementById('chart_left1'), 'dark');
 
-      let startIndex = 10;
-      let startYear = this.years[startIndex];
-      this.option = {
-        grid: {
-          top: 10,
-          bottom: 30,
-          left: 150,
-          right: 80
-        },
+      var data = [];
+      for (let i = 0; i < 5; ++i) {
+        data.push(Math.round(Math.random() * 200));
+      }
+
+      let option = {
+        backgroundColor: "",
         xAxis: {
-          max: 'dataMax',
-          axisLabel: {
-            formatter: function (n) {
-              return Math.round(n) + '';
-            }
-          }
-        },
-        dataset: {
-          source: this.data.slice(1).filter(function (d) {
-            return d[4] === startYear;
-          })
+          max: 'dataMax'
         },
         yAxis: {
           type: 'category',
+          data: ['游戏', '动画', '影视', '生活', '舞蹈'],
           inverse: true,
-          max: 10,
-          axisLabel: {
-            show: true,
-            fontSize: 14,
-            formatter: function (value) {
-              return value + '{flag|' + this.getFlag(value) + '}';
-            },
-            rich: {
-              flag: {
-                fontSize: 25,
-                padding: 5
-              }
-            }
-          },
           animationDuration: 300,
-          animationDurationUpdate: 300
+          animationDurationUpdate: 300,
+          max: 2 // only the largest 3 bars will be displayed
         },
         series: [
           {
             realtimeSort: true,
-            seriesLayoutBy: 'column',
+            name: 'X',
             type: 'bar',
-            itemStyle: {
-              color: function (param) {
-                return this.countryColors[param.value[3]] || '#5470c6';
-              }
-            },
-            encode: {
-              x: this.dimension,
-              y: 3
-            },
+            data: data,
             label: {
               show: true,
-              precision: 1,
               position: 'right',
-              valueAnimation: true,
-              fontFamily: 'monospace'
+              valueAnimation: true
             }
           }
         ],
-        // Disable init animation.
-        animationDuration: 0,
-        animationDurationUpdate: this.updateFrequency,
+        legend: {
+          show: false
+        },
+        animationDuration: 3000,
+        animationDurationUpdate: 3000,
         animationEasing: 'linear',
-        animationEasingUpdate: 'linear',
-        graphic: {
-          elements: [
-            {
-              type: 'text',
-              right: 160,
-              bottom: 60,
-              style: {
-                text: startYear,
-                font: 'bolder 80px monospace',
-                fill: 'rgba(100, 100, 100, 0.25)'
-              },
-              z: 100
-            }
-          ]
-        }
+        animationEasingUpdate: 'linear'
       };
-      this.chart.setOption(this.option);
 
-      for (let i = startIndex; i < this.years.length - 1; ++i) {
-        setTimeout(() => {
-          this.updateYear(this.years[i + 1]);
-        }, (i - startIndex) * this.updateFrequency);
+      function update() {
+        var data = option.series[0].data;
+        for (var i = 0; i < data.length; ++i) {
+          if (Math.random() > 0.9) {
+            data[i] += Math.round(Math.random() * 200000);
+          } else {
+            data[i] += Math.round(Math.random() * 20000);
+          }
+        }
+        myChart.setOption(option);
       }
+
+      setInterval(function() {
+        update();
+      }, 10000);
     },
   },
   getFlag(countryName) {

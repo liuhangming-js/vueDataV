@@ -48,7 +48,7 @@
             <div class="resume-hd">
               <ul>
                 <li>
-                  <countTo :startVal='startVal' :endVal='716' :duration='6000' separator=""></countTo>
+                  <countTo :startVal='startVal' :endVal='13158' :duration='6000' separator=""></countTo>
                 </li>
                 <li>
                   <countTo :startVal='startVal' :endVal='652' :duration='6000' separator=""></countTo>
@@ -190,9 +190,13 @@ export default {
           backgroundColor: '',
           title: {
             text: '标签关联图',
-            subtext: 'Default layout',
-            top: 'bottom',
-            left: 'right'
+            subtext: 'BiliBili',
+            top: 'center',
+            left: 'center',
+            textStyle: {
+              color: '#ccc',
+              fontSize: 40
+            }
           },
           tooltip: {},
           legend: {

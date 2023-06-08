@@ -31,10 +31,10 @@ export default {
         [4276007, 27755, 342051, 160184, 73650, 19056, 31]
       ];
       const dataGZ = [
-        [118, 50, 0, 1.383, 76, 11, 31]
+        [2995668,	1705,	259212, 89326, 71926, 26049, 31]
       ];
       const dataSH = [
-        [187, 143, 201, 1.39, 89, 53, 31]
+        [2329845, 4576, 172888, 39602, 13709,5848, 31]
       ];
       const lineStyle = {
         width: 1,
@@ -50,7 +50,7 @@ export default {
           orient: 'vertical',
           x: 'left',
           y: 'center',
-          data: ['video1', 'video2', 'video3'],
+          data: ['不是在玩游戏', '师傅', 'Cosplay'],
           itemGap: 10,
           textStyle: {
             color: '#fff',
@@ -95,7 +95,7 @@ export default {
         },
         series: [
           {
-            name: 'video1',
+            name: '不是在玩游戏',
             type: 'radar',
             lineStyle: lineStyle,
             data: dataBJ,
@@ -108,10 +108,10 @@ export default {
             }
           },
           {
-            name: 'video2',
+            name: '师傅',
             type: 'radar',
             lineStyle: lineStyle,
-            data: dataSH,
+            data: dataGZ,
             symbol: 'none',
             itemStyle: {
               color: '#B3E4A1'
@@ -121,10 +121,10 @@ export default {
             }
           },
           {
-            name: 'video3',
+            name: 'Cosplay',
             type: 'radar',
             lineStyle: lineStyle,
-            data: dataGZ,
+            data: dataSH,
             symbol: 'none',
             itemStyle: {
               color: 'rgb(238, 197, 102)'

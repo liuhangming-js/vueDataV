@@ -19,143 +19,7 @@ export default {
   name: "wordCloud",
   data() {
     return {
-      wordData: [
-        {
-          name: '区块链',
-          value: 810
-        },
-        {
-          name: '云计算',
-          value: 520
-        },
-        {
-          name: "人工智能",
-          value: 928
-        },
-        {
-          name: "大数据",
-          value: 906
-        },
-        {
-          name: "工业互联网",
-          value: 825
-        },
-        {
-          name: "医疗",
-          value: 514
-        },
-        {
-          name: "质量溯源",
-          value: 486
-        },
-        {
-          name: "政务",
-          value: 53
-        },
-        {
-          name: "密码学",
-          value: 927
-        },
-        {
-          name: "金融行业",
-          value: 1308
-        },
-        {
-          name: "供应链",
-          value: 693
-        },
-        {
-          name: "公有链",
-          value: 611
-        },
-        {
-          name: "私有链",
-          value: 512
-        },
-        {
-          name: "联盟链",
-          value: 382
-        },
-        {
-          name: "数据共享",
-          value: 312
-        },
-        {
-          name: "文创版权",
-          value: 187
-        },
-        {
-          name: "天河链",
-          value: 163
-        },
-        {
-          name: "数据存证",
-          value: 104
-        },
-        {
-          name: "UDFS存储",
-          value: 3
-        },
-        {
-          name: "在线教育",
-          value: 31
-        },
-        {
-          name: "关联分析",
-          value: 941
-        },
-        {
-          name: "智慧停车",
-          value: 585
-        },
-        {
-          name: "链云生态",
-          value: 473
-        },
-        {
-          name: "应用层",
-          value: 358
-        },
-        {
-          name: "网络层",
-          value: 246
-        },
-        {
-          name: "数据层",
-          value: 207
-        },
-        {
-          name: "基础层",
-          value: 194
-        },
-        {
-          name: "智能合约",
-          value: 104
-        },
-        {
-          name: "去中心化",
-          value: 87
-        },
-        {
-          name: "数字货币",
-          value: 415
-        },
-        {
-          name: "酷屏",
-          value: 253
-        },
-        {
-          name: "可视化",
-          value: 211
-        },
-        {
-          name: "P2P",
-          value: 116
-        },
-        {
-          name: "数据挖掘",
-          value: 1309
-        }]
+      wordData: []
     }
   },
   mounted() {
@@ -168,47 +32,67 @@ export default {
     getEchartRight1() {
       let myChart = echarts.init(document.getElementById('chart_right1'), 'dark');
 
-      let wordData = this.wordData.map(word => ({
-        ...word,
-        itemStyle: {
-          color: `rgb(${[
-            Math.round(Math.random() * 200 + 55),
-            Math.round(Math.random() * 200 + 55),
-            Math.round(Math.random() * 200 + 55)
-          ].join(',')})`
+      this.$axios.post("http://10.2.0.138:8080/api/v1/video/frequency", {}, {
+        headers: {
+          'Content-Type': 'application/json'
         }
-      }));
+      }).then((res) => {
+        let midData = res.data.data;
+        this.wordData.push(midData[1]);
+        this.wordData.push(midData[2]);
+        this.wordData.push(midData[3]);
+        this.wordData.push(midData[5]);
+        this.wordData.push(midData[7]);
+        this.wordData.push(midData[10]);
+        this.wordData.push(midData[14]);
+        this.wordData.push(midData[16]);
+        this.wordData.push(midData[21]);
+        this.wordData.push(midData[23]);
+        this.wordData.push(midData[24]);
+        this.wordData.push(midData[25]);
+        this.wordData.push(midData[26]);
+        this.wordData.push(midData[27]);
+        this.wordData.push(midData[28]);
+        this.wordData.push(midData[29]);
+        this.wordData.push(midData[30]);
+        this.wordData.push(midData[31]);
+        this.wordData.push(midData[32]);
+        this.wordData.push(midData[33]);
 
-      let option = {
-        backgroundColor: '',
-        series: [{
-          type: 'wordCloud',
-          gridSize: 1,
-          sizeRange: [12, 50],
-          rotationRange: [-90, 90],
-          rotationStep: 45,
-          shape: 'diamond',
-          width: '90%',
-          textPadding: 0,
-          autoSize: {
-            enable: true,
-            minSize: 6
-          },
-          textStyle: {
-            normal: {
-              color: function () {
-                return this.data.itemStyle.color;
+        myChart.setOption({
+          backgroundColor: '',
+          series: [{
+            type: 'wordCloud',
+            gridSize: 1,
+            sizeRange: [25, 100],
+            rotationRange: [-90, 90],
+            rotationStep: 45,
+            shape: 'diamond',
+            width: '90%',
+            textPadding: 0,
+            autoSize: {
+              enable: true,
+              minSize: 6
+            },
+            textStyle: {
+              normal: {
+                color: function () {
+                  return 'rgb(' + [
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160)
+                  ].join(',') + ')';
+                }
+              },
+              emphasis: {
+                fontSize: 20
               }
             },
-            emphasis: {
-              fontSize: 20
-            }
-          },
-          data: wordData
-        }]
-      };
+            data: this.wordData
+          }]
+        })
+      });
 
-      myChart.setOption(option, true);
       window.addEventListener('resize', () => {
         myChart.resize();
       });

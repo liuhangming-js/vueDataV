@@ -27,63 +27,96 @@ export default {
     getEchartRight2() {
       let myChart = echarts.init(document.getElementById('chart_right2'), 'dark');
 
-      //axios获取数据
+      console.log(1);
       const data = {};
 
       this.$axios.post("http://10.2.0.138:8080/api/v1/video/videotime", data, {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then((res) => {
-        this.chartData = res.data.data;
-        this.chartData.push({
-          // make an record to fill the bottom 50%
-          value: 75 + 117 + 155 + 344 + 27,
-          itemStyle: {
-            // stop the chart from rendering this piece
-            color: 'none',
-            decal: {
-              symbol: 'none'
-            }
-          },
-          label: {
-            show: false
-          }
-        });
       })
-
-      let option = {
-        backgroundColor: '',
-        tooltip: {
-          trigger: 'item'
-        },
-        legend: {
-          show: false
-        },
-        series: [
-          {
-            name: 'Access From',
-            type: 'pie',
-            radius: ['40%', '70%'],
-            center: ['50%', '70%'],
-            // adjust the start angle
-            startAngle: 180,
-            label: {
-              show: true,
-              formatter(param) {
-                // correct the percentage
-                return param.name + ' (' + param.percent * 2 + '%)';
+          // this.$axios.get("http://localhost:8081/data/distribution.json")
+          .then((res) => {
+            this.chartData = res.data.data;
+            let sum = 0;
+            for (let i = 0; i < this.chartData.length; i++) {
+              sum += this.chartData[i].value;
+            }
+            this.chartData.push({
+              // make an record to fill the bottom 50%
+              value: sum,
+              itemStyle: {
+                // stop the chart from rendering this piece
+                color: "none",
+                decal: {
+                  symbol: "none"
+                }
+              },
+              label: {
+                show: false
               }
-            },
-            data: this.chartData
-          }
-        ]
-      };
+            });
+            console.log(this.chartData[0].value);
+            console.log(this.chartData[0].name);
 
-      myChart.setOption(option, true);
-      window.addEventListener('resize', () => {
-        myChart.resize();
-      });
+            myChart.setOption({
+              backgroundColor: '',
+              tooltip: {
+                trigger: 'item'
+              },
+              legend: {
+                show: false
+              },
+              series: [
+                {
+                  name: 'Access From',
+                  type: 'pie',
+                  radius: ['40%', '70%'],
+                  center: ['50%', '70%'],
+                  // adjust the start angle
+                  startAngle: 180,
+                  label: {
+                    show: true,
+                    formatter(param) {
+                      // correct the percentage
+                      return param.name + ' (' + param.percent * 2 + '%)';
+                    }
+                  },
+                  data: this.chartData
+                  // data: [
+                  //   {
+                  //     value: 100,
+                  //     name: "长视频"
+                  //   },
+                  //   {
+                  //     value: 100,
+                  //     name: "长视频"
+                  //   },
+                  //   {
+                  //     value: 100,
+                  //     name: "长视频"
+                  //   },
+                  //   {
+                  //     value: 300,
+                  //     itemStyle: {
+                  //       color: "none",
+                  //       decal: {
+                  //         symbol: "none"
+                  //       }
+                  //     },
+                  //     label: {
+                  //       show: false
+                  //     }
+                  //   }
+                  // ]
+
+                }
+              ]
+            });
+            window.addEventListener('resize', () => {
+              myChart.resize()
+            })
+          });
     },
   },
   beforeDestroy() {

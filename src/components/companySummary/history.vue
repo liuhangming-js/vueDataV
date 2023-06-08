@@ -31,6 +31,9 @@ export default {
 
       option = {
         backgroundColor: '',
+        tooltip: {
+          show: 'item'
+        },
         legend: {
           show: false,
           top: 'bottom'
