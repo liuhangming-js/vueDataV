@@ -1,33 +1,19 @@
-<!--
- 描述: 客户分布
- 作者: Jack Chen
- 日期: 2020-05-09
--->
-
-<template>
-  <div class="distribution-container"> 
-    <div class="chart" id="chart_right2"></div>
-  </div>
-</template>
-
 <script>
 import * as echarts from 'echarts';
-
 export default {
-  name: "distribution",
   data() {
     return {
       chartData: ""
     }
   },
   mounted() {
-    this.getEchartRight2();
+    this.chartInit();
   },
   methods: {
-    getEchartRight2() {
+    chartInit() {
       let myChart = echarts.init(document.getElementById('chart_right2'), 'dark');
 
-      //axios获取数据
+      console.log(1);
       const data = {};
 
       this.$axios.post("http://10.2.0.138:8080/api/v1/video/videotime", data, {
@@ -50,7 +36,12 @@ export default {
             show: false
           }
         });
-      })
+
+        this.chartData = JSON.parse(this.chartData);
+
+        console.log(this.chartData);
+        console.log(2);
+      });
 
       let option = {
         backgroundColor: '',
@@ -75,27 +66,45 @@ export default {
                 return param.name + ' (' + param.percent * 2 + '%)';
               }
             },
+            // data: [
+            //   { value: 1048, name: 'Search Engine' },
+            //   { value: 735, name: 'Direct' },
+            //   { value: 580, name: 'Email' },
+            //   { value: 484, name: 'Union Ads' },
+            //   { value: 300, name: 'Video Ads' },
+            //   {
+            //     // make an record to fill the bottom 50%
+            //     value: 1048 + 735 + 580 + 484 + 300,
+            //     itemStyle: {
+            //       // stop the chart from rendering this piece
+            //       color: 'none',
+            //       decal: {
+            //         symbol: 'none'
+            //       }
+            //     },
+            //     label: {
+            //       show: false
+            //     }
+            //   }
+            // ]
             data: this.chartData
           }
         ]
       };
 
       myChart.setOption(option, true);
-      window.addEventListener('resize', () => {
-        myChart.resize();
-      });
-    },
-  },
-  beforeDestroy() {
-    
-  }
-};
-</script>
-
-<style lang="scss" scoped>
-.distribution-container {
-  .chart {
-    height: 3rem;
+    }
   }
 }
+</script>
+
+<template>
+  <div>
+    {{this.chartData[5]}}
+    <div id="chart_right2" style="width: 200px; height: 500px"></div>
+  </div>
+</template>
+
+<style scoped lang="scss">
+
 </style>
